@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Conference System - Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Additional login page styles */
+        .login-header {
+            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+        }
+        
+        .demo-accounts {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .user-type-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .user-type-btn {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .user-type-btn:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+        }
+        
+        .user-type-btn.active {
+            border-color: #3498db;
+            background: #3498db;
+            color: white;
+        }
+        
+        .user-type-btn i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+    </style>
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-header">
+            <h1><i class="fas fa-users"></i> Case Conference System</h1>
+            <p>Special Education Management Platform</p>
+        </div>
+        
+        <div class="login-form">
+            <h2>Login to Your Account</h2>
+            
+            <div class="user-type-selector">
+                <div class="user-type-btn active" data-type="teacher">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Teacher</span>
+                </div>
+                <div class="user-type-btn" data-type="admin">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin</span>
+                </div>
+                <div class="user-type-btn" data-type="parent">
+                    <i class="fas fa-user-friends"></i>
+                    <span>Parent</span>
+                </div>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">
+                        <i class="fas fa-envelope"></i> Email:
+                    </label>
+                    <input type="email" id="username" name="username" required 
+                           placeholder="Enter your email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i> Password:
+                    </label>
+                    <div style="position: relative;">
+                        <input type="password" id="password" name="password" required 
+                               placeholder="Enter your password">
+                        <button type="button" id="togglePassword" 
+                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #666;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <input type="hidden" id="userType" name="userType" value="teacher">
+                
+                <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Login to System
+                </button>
+                
+                <div style="text-align: center; margin-top: 1rem;">
+                    <div class="loading-spinner" id="loginSpinner" style="display: none;"></div>
+                </div>
+            </form>
+            
+            <div class="login-links">
+                <div class="demo-accounts">
+                    <h4><i class="fas fa-key"></i> Demo Accounts:</h4>
+                    <div class="demo-account-item">
+                        <strong><i class="fas fa-chalkboard-teacher"></i> Teacher:</strong>
+                        <p>Any email / any password</p>
+                    </div>
+                    <div class="demo-account-item">
+                        <strong><i class="fas fa-user-shield"></i> Admin:</strong>
+                        <p>admin@schools.org / admin123</p>
+                    </div>
+                    <div class="demo-account-item">
+                        <strong><i class="fas fa-user-friends"></i> Parent:</strong>
+                        <p>Any email / any password</p>
+                    </div>
+                </div>
+                
+                <div class="session-info">
+                    <p><i class="fas fa-info-circle"></i> <small>First time? Just enter any email and password!</small></p>
+                    <p><small><a href="#" onclick="system.clearSession()">Clear Session & Refresh</a></small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // User type selection
+        document.querySelectorAll('.user-type-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.user-type-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('userType').value = this.dataset.type;
+                
+                // Add animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+        
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+        
+        // Form submission animation
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const loginBtn = document.getElementById('loginBtn');
+            const spinner = document.getElementById('loginSpinner');
+            
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+            spinner.style.display = 'block';
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

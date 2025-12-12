@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Case Conference System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Case Conference</h1>
+                <p>Admin Portal</p>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#overview" class="active" data-tab="overview">
+                        <i class="fas fa-tachometer-alt"></i>System Overview
+                    </a></li>
+                    <li><a href="#all-students" data-tab="all-students">
+                        <i class="fas fa-users"></i>All Students
+                    </a></li>
+                    <li><a href="#teachers" data-tab="teachers">
+                        <i class="fas fa-chalkboard-teacher"></i>Teachers
+                    </a></li>
+                    <li><a href="#schools" data-tab="schools">
+                        <i class="fas fa-school"></i>Schools
+                    </a></li>
+                    <li><a href="#parents" data-tab="parents">
+                        <i class="fas fa-user-friends"></i>Parents
+                    </a></li>
+                    <li><a href="#reports" data-tab="reports">
+                        <i class="fas fa-chart-bar"></i>System Reports
+                    </a></li>
+                    <li><a href="#settings" data-tab="settings">
+                        <i class="fas fa-cogs"></i>System Settings
+                    </a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h2 id="pageTitle">System Overview</h2>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">SA</div>
+                        <span id="currentUser">System Administrator</span>
+                    </div>
+                    <button id="logoutBtn" class="btn btn-secondary">
+                        <i class="fas fa-sign-out-alt"></i>Logout
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Overview Tab -->
+                <div id="overview" class="tab-content active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-number" id="totalStudentsAdmin">0</span>
+                            <h3>Total Students</h3>
+                            <p>Across all schools</p>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="totalTeachers">0</span>
+                            <h3>Active Teachers</h3>
+                            <p>Itinerant staff</p>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="totalSchools">0</span>
+                            <h3>Schools & Facilities</h3>
+                            <p>Participating locations</p>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="totalParents">0</span>
+                            <h3>Parent Accounts</h3>
+                            <p>Registered parents</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Recent System Activity</h3>
+                            <button class="btn btn-primary btn-sm" onclick="system.refreshSystemActivity()">
+                                <i class="fas fa-sync-alt"></i>Refresh
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="activity-list" id="systemActivity">
+                                <div class="activity-item">
+                                    <strong>New Student Added</strong>
+                                    <span>Emma Wilson was added by Sarah Johnson</span>
+                                    <small>Today, 10:30 AM</small>
+                                </div>
+                                <div class="activity-item">
+                                    <strong>Case Conference Completed</strong>
+                                    <span>James Miller's progress report finalized</span>
+                                    <small>Yesterday, 2:15 PM</small>
+                                </div>
+                                <div class="activity-item">
+                                    <strong>Teacher Assignment</strong>
+                                    <span>Michael Brown assigned to Community Learning Center</span>
+                                    <small>2 days ago</small>
+                                </div>
+                                <div class="activity-item">
+                                    <strong>System Backup</strong>
+                                    <span>Weekly system backup completed successfully</span>
+                                    <small>3 days ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Quick Actions</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                                <button class="btn btn-primary" onclick="system.showModal('addTeacherModal')">
+                                    <i class="fas fa-user-plus"></i>Add New Teacher
+                                </button>
+                                <button class="btn btn-primary" onclick="system.showModal('addSchoolModal')">
+                                    <i class="fas fa-school"></i>Add New School
+                                </button>
+                                <button class="btn btn-primary" onclick="system.showModal('adminAddStudentModal')">
+                                    <i class="fas fa-user-graduate"></i>Add New Student
+                                </button>
+                                <button class="btn btn-primary" onclick="system.showModal('addParentModal')">
+                                    <i class="fas fa-user-friends"></i>Add Parent
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Students Tab -->
+                <div id="all-students" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>All Students</h3>
+                            <p>Manage students across all schools and teachers</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="filters">
+                                <input type="text" id="adminStudentSearch" placeholder="Search all students..." class="search-input">
+                                <select id="adminSchoolFilter">
+                                    <option value="">All Schools</option>
+                                </select>
+                                <select id="adminTeacherFilter">
+                                    <option value="">All Teachers</option>
+                                </select>
+                            </div>
+                            <div class="section-actions" style="margin-bottom: 1.5rem;">
+                                <button class="btn btn-primary" onclick="system.showModal('adminAddStudentModal')">
+                                    <i class="fas fa-user-plus"></i>Add New Student
+                                </button>
+                                <button class="btn btn-secondary" onclick="system.exportAllStudents()">
+                                    <i class="fas fa-download"></i>Export Students
+                                </button>
+                            </div>
+                            <div id="allStudentsList" class="student-grid">
+                                <!-- All students will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teachers Tab -->
+                <div id="teachers" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Teacher Management</h3>
+                            <p>Manage itinerant teacher accounts and assignments</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="section-actions" style="margin-bottom: 1.5rem;">
+                                <button class="btn btn-primary" onclick="system.showModal('addTeacherModal')">
+                                    <i class="fas fa-user-plus"></i>Add New Teacher
+                                </button>
+                                <button class="btn btn-secondary" onclick="system.exportTeacherData()">
+                                    <i class="fas fa-download"></i>Export Teacher Data
+                                </button>
+                            </div>
+                            <div id="teachersList" class="teachers-grid">
+                                <!-- Teachers will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schools Tab -->
+                <div id="schools" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>School & Facility Management</h3>
+                            <p>Manage participating schools and facilities</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="section-actions" style="margin-bottom: 1.5rem;">
+                                <button class="btn btn-primary" onclick="system.showModal('addSchoolModal')">
+                                    <i class="fas fa-school"></i>Add New School
+                                </button>
+                                <button class="btn btn-secondary" onclick="system.updateSchoolInformation()">
+                                    <i class="fas fa-sync-alt"></i>Update School Information
+                                </button>
+                            </div>
+                            <div id="schoolsList" class="schools-grid">
+                                <!-- Schools will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parents Tab -->
+                <div id="parents" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Parent Management</h3>
+                            <p>Manage parent accounts and access</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="section-actions" style="margin-bottom: 1.5rem;">
+                                <button class="btn btn-primary" onclick="system.showModal('addParentModal')">
+                                    <i class="fas fa-user-plus"></i>Add New Parent
+                                </button>
+                                <button class="btn btn-secondary" onclick="system.exportParentData()">
+                                    <i class="fas fa-download"></i>Export Parent Data
+                                </button>
+                            </div>
+                            <div id="parentsList" class="teachers-grid">
+                                <!-- Parents will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Reports Tab -->
+                <div id="reports" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>System Reports & Analytics</h3>
+                            <p>Generate comprehensive reports and analytics</p>
+                        </div>
+                        <div class="card-body">
+                            <div id="systemReports">
+                                <!-- Reports will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Settings Tab -->
+                <div id="settings" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>System Settings</h3>
+                            <p>Configure system preferences and security</p>
+                        </div>
+                        <div class="card-body">
+                            <form id="systemSettingsForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="systemName">System Name</label>
+                                        <input type="text" id="systemName" name="systemName" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sessionTimeout">Session Timeout (minutes)</label>
+                                        <input type="number" id="sessionTimeout" name="sessionTimeout" min="5" max="120" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="backupFrequency">Backup Frequency</label>
+                                        <select id="backupFrequency" name="backupFrequency" required>
+                                            <option value="daily">Daily</option>
+                                            <option value="weekly">Weekly</option>
+                                            <option value="monthly">Monthly</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reportRetention">Report Retention (days)</label>
+                                        <input type="number" id="reportRetention" name="reportRetention" min="30" max="1095" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="dataExportFormat">Data Export Format</label>
+                                        <select id="dataExportFormat" name="dataExportFormat" required>
+                                            <option value="json">JSON</option>
+                                            <option value="csv">CSV</option>
+                                            <option value="pdf">PDF</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <input type="checkbox" id="autoBackup" name="autoBackup">
+                                        Enable Automatic Backups
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <input type="checkbox" id="emailNotifications" name="emailNotifications">
+                                        Enable Email Notifications
+                                    </label>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                                    <button type="button" class="btn btn-secondary" onclick="system.loadSystemSettings()">Reset to Defaults</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Student Modal for Admin -->
+    <div id="adminAddStudentModal" class="modal">
+        <div class="modal-content">
+            <button class="close">&times;</button>
+            <h3>Add New Student</h3>
+            <form id="adminAddStudentForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="adminStudentId">Student ID *</label>
+                        <input type="text" id="adminStudentId" name="id" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminStudentName">Full Name *</label>
+                        <input type="text" id="adminStudentName" name="name" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="adminStudentDob">Date of Birth *</label>
+                        <input type="date" id="adminStudentDob" name="dob" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminStudentGender">Gender</label>
+                        <select id="adminStudentGender" name="gender">
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="adminStudentSchool">Assigned School/Facility *</label>
+                        <select id="adminStudentSchool" name="school" required>
+                            <option value="">Select School</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminStudentTeacher">Assigned Teacher *</label>
+                        <select id="adminStudentTeacher" name="teacher" required>
+                            <option value="">Select Teacher</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="adminStudentDisability">Primary Disability Category</label>
+                    <select id="adminStudentDisability" name="disabilityCategory">
+                        <option value="">Select Disability Category</option>
+                        <option value="autism">Autism Spectrum Disorder</option>
+                        <option value="learning">Specific Learning Disability</option>
+                        <option value="speech">Speech/Language Impairment</option>
+                        <option value="intellectual">Intellectual Disability</option>
+                        <option value="emotional">Emotional Disturbance</option>
+                        <option value="developmental">Developmental Delay</option>
+                        <option value="other">Other Health Impairment</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="adminStudentIepDate">IEP Date</label>
+                    <input type="date" id="adminStudentIepDate" name="iepDate">
+                </div>
+
+                <div class="form-group">
+                    <label for="adminStudentNotes">Initial Notes</label>
+                    <textarea id="adminStudentNotes" name="notes" rows="3"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Add Student</button>
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Teacher Modal -->
+    <div id="addTeacherModal" class="modal">
+        <div class="modal-content">
+            <button class="close">&times;</button>
+            <h3>Add New Teacher</h3>
+            <form id="addTeacherForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="teacherName">Full Name *</label>
+                        <input type="text" id="teacherName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="teacherEmail">Email *</label>
+                        <input type="email" id="teacherEmail" name="email" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="teacherPhone">Phone</label>
+                        <input type="tel" id="teacherPhone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="teacherPassword">Password *</label>
+                        <input type="password" id="teacherPassword" name="password" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="teacherQualifications">Qualifications</label>
+                    <input type="text" id="teacherQualifications" name="qualifications" placeholder="M.Ed Special Education">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="teacherExperience">Years of Experience</label>
+                        <input type="number" id="teacherExperience" name="experience" min="0" max="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="teacherCertifications">Certifications</label>
+                        <input type="text" id="teacherCertifications" name="certifications" placeholder="State License, Special Ed Endorsement">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="teacherSchools">Assign Schools</label>
+                    <select id="teacherSchools" name="schools" multiple style="height: 100px;">
+                        <option value="">Select Schools</option>
+                    </select>
+                    <small>Hold Ctrl/Cmd to select multiple schools</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="teacherBio">Bio/Description</label>
+                    <textarea id="teacherBio" name="bio" rows="3" placeholder="Brief description of teaching philosophy..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Add Teacher</button>
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add School Modal -->
+    <div id="addSchoolModal" class="modal">
+        <div class="modal-content">
+            <button class="close">&times;</button>
+            <h3>Add New School/Facility</h3>
+            <form id="addSchoolForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="schoolName">School Name *</label>
+                        <input type="text" id="schoolName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="schoolType">School Type *</label>
+                        <select id="schoolType" name="type" required>
+                            <option value="">Select Type</option>
+                            <option value="public">Public School</option>
+                            <option value="private">Private School</option>
+                            <option value="charter">Charter School</option>
+                            <option value="preschool">Preschool</option>
+                            <option value="daycare">Daycare Facility</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="schoolAddress">Address *</label>
+                    <input type="text" id="schoolAddress" name="address" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="schoolPhone">Phone *</label>
+                        <input type="tel" id="schoolPhone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="schoolPrincipal">Principal/Director *</label>
+                        <input type="text" id="schoolPrincipal" name="principal" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="schoolGrades">Grade Levels</label>
+                        <input type="text" id="schoolGrades" name="grades" placeholder="K-5, Pre-K, etc.">
+                    </div>
+                    <div class="form-group">
+                        <label for="schoolEnrollment">Total Enrollment</label>
+                        <input type="number" id="schoolEnrollment" name="enrollment" min="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="schoolCoordinator">Special Ed Coordinator</label>
+                    <input type="text" id="schoolCoordinator" name="coordinator">
+                </div>
+
+                <div class="form-group">
+                    <label for="schoolFacilities">Available Facilities</label>
+                    <input type="text" id="schoolFacilities" name="facilities" placeholder="Resource Room, Therapy Room, Sensory Room">
+                    <small>Separate multiple facilities with commas</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Add School</button>
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Parent Modal -->
+    <div id="addParentModal" class="modal">
+        <div class="modal-content">
+            <button class="close">&times;</button>
+            <h3>Add New Parent</h3>
+            <form id="addParentForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="parentName">Full Name *</label>
+                        <input type="text" id="parentName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="parentEmail">Email *</label>
+                        <input type="email" id="parentEmail" name="email" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="parentPhone">Phone</label>
+                        <input type="tel" id="parentPhone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="parentPassword">Password *</label>
+                        <input type="password" id="parentPassword" name="password" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="parentChildren">Assign Children</label>
+                    <select id="parentChildren" name="children" multiple style="height: 100px;">
+                        <option value="">Select Students</option>
+                    </select>
+                    <small>Hold Ctrl/Cmd to select multiple students</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="emergencyContactName">Emergency Contact Name</label>
+                    <input type="text" id="emergencyContactName" name="emergencyContactName">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="emergencyContactRelationship">Relationship</label>
+                        <input type="text" id="emergencyContactRelationship" name="emergencyContactRelationship" placeholder="Grandfather, Aunt, etc.">
+                    </div>
+                    <div class="form-group">
+                        <label for="emergencyContactPhone">Emergency Contact Phone</label>
+                        <input type="tel" id="emergencyContactPhone" name="emergencyContactPhone">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Add Parent</button>
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Student Detail Modal -->
+    <div id="studentDetailModal" class="modal">
+        <div class="modal-content large">
+            <button class="close">&times;</button>
+            <div id="studentDetailContent">
+                <!-- Student details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Teacher Detail Modal -->
+    <div id="teacherDetailModal" class="modal">
+        <div class="modal-content large">
+            <button class="close">&times;</button>
+            <div id="teacherDetailContent">
+                <!-- Teacher details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- School Detail Modal -->
+    <div id="schoolDetailModal" class="modal">
+        <div class="modal-content large">
+            <button class="close">&times;</button>
+            <div id="schoolDetailContent">
+                <!-- School details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Parent Detail Modal -->
+    <div id="parentDetailModal" class="modal">
+        <div class="modal-content large">
+            <button class="close">&times;</button>
+            <div id="parentDetailContent">
+                <!-- Parent details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

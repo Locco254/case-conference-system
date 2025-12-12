@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Portal - Case Conference System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Case Conference</h1>
+                <p>Parent Portal</p>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#overview" class="active" data-tab="overview">
+                        <i class="fas fa-tachometer-alt"></i>Dashboard
+                    </a></li>
+                    <li><a href="#students" data-tab="students">
+                        <i class="fas fa-user-graduate"></i>My Children
+                    </a></li>
+                    <li><a href="#meetings" data-tab="meetings">
+                        <i class="fas fa-calendar-alt"></i>Meetings
+                    </a></li>
+                    <li><a href="#documents" data-tab="documents">
+                        <i class="fas fa-file-alt"></i>Documents
+                    </a></li>
+                    <li><a href="#communications" data-tab="communications">
+                        <i class="fas fa-comments"></i>Communications
+                    </a></li>
+                    <li><a href="#profile" data-tab="profile">
+                        <i class="fas fa-user"></i>My Profile
+                    </a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h2 id="pageTitle">Parent Dashboard</h2>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">PW</div>
+                        <span id="currentUser">Parent Wilson</span>
+                    </div>
+                    <button id="logoutBtn" class="btn btn-secondary">
+                        <i class="fas fa-sign-out-alt"></i>Logout
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Overview Tab -->
+                <div id="overview" class="tab-content active">
+                    <div class="parent-stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-number" id="parentChildrenCount">2</span>
+                            <h3>Children</h3>
+                            <p>In the program</p>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="upcomingMeetings">1</span>
+                            <h3>Upcoming Meetings</h3>
+                            <p>This month</p>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="newDocuments">3</span>
+                            <h3>New Documents</h3>
+                            <p>Available for review</p>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="unreadMessages">1</span>
+                            <h3>Unread Messages</h3>
+                            <p>From teachers</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Quick Actions</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="quick-action-grid">
+                                <a href="#" class="quick-action-btn" onclick="system.requestMeeting()">
+                                    <i class="fas fa-calendar-plus"></i>
+                                    <span>Request Meeting</span>
+                                </a>
+                                <a href="#" class="quick-action-btn" onclick="system.switchMainTab('communications')">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>Message Teacher</span>
+                                </a>
+                                <a href="#" class="quick-action-btn" onclick="system.switchMainTab('documents')">
+                                    <i class="fas fa-file-download"></i>
+                                    <span>View Documents</span>
+                                </a>
+                                <a href="#" class="quick-action-btn" onclick="system.switchMainTab('students')">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Check Progress</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Upcoming Meetings & Events</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="parentMeetings" class="meeting-schedule">
+                                <!-- Meetings will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Recent Updates</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="activity-list">
+                                <div class="activity-item">
+                                    <strong>Progress Report Available</strong>
+                                    <span>New progress report for Emma Wilson is now available for review</span>
+                                    <small>Today, 9:00 AM</small>
+                                </div>
+                                <div class="activity-item">
+                                    <strong>Meeting Scheduled</strong>
+                                    <span>Case conference scheduled for November 20th at 10:00 AM</span>
+                                    <small>Yesterday, 2:30 PM</small>
+                                </div>
+                                <div class="activity-item">
+                                    <strong>Message Received</strong>
+                                    <span>New message from Sarah Johnson regarding classroom activities</span>
+                                    <small>2 days ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students Tab -->
+                <div id="students" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>My Children</h3>
+                            <p>View progress and information for your children</p>
+                        </div>
+                        <div class="card-body">
+                            <div id="parentStudents">
+                                <!-- Children will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Meetings Tab -->
+                <div id="meetings" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Meetings & Conferences</h3>
+                            <div class="header-actions">
+                                <button class="btn btn-primary" onclick="system.requestMeeting()">
+                                    <i class="fas fa-calendar-plus"></i>Request Meeting
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="parentMeetingsList" class="meeting-schedule">
+                                <!-- All meetings will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents Tab -->
+                <div id="documents" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Documents & Reports</h3>
+                            <p>Access all documents related to your children</p>
+                        </div>
+                        <div class="card-body">
+                            <div id="parentDocuments">
+                                <!-- Documents will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Communications Tab -->
+                <div id="communications" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Communications</h3>
+                            <p>Messages and updates from teachers and staff</p>
+                        </div>
+                        <div class="card-body">
+                            <div id="parentCommunications">
+                                <!-- Communications will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Tab -->
+                <div id="profile" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>My Profile</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="parentProfileForm">
+                                <div class="parent-profile-section">
+                                    <h4>Personal Information</h4>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="parentName">Full Name:</label>
+                                            <input type="text" id="parentName" name="name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="parentEmail">Email:</label>
+                                            <input type="email" id="parentEmail" name="email" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="parentPhone">Phone:</label>
+                                        <input type="tel" id="parentPhone" name="phone">
+                                    </div>
+                                </div>
+
+                                <div class="parent-profile-section">
+                                    <h4>Emergency Contact</h4>
+                                    <div id="emergencyContact" class="emergency-contact">
+                                        <!-- Emergency contact info will be loaded here -->
+                                    </div>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                                    <button type="button" class="btn btn-secondary">Change Password</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Student Progress Modal -->
+    <div id="studentProgressModal" class="modal">
+        <div class="modal-content large">
+            <button class="close">&times;</button>
+            <div id="studentProgressContent">
+                <!-- Student progress will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Teacher Modal -->
+    <div id="contactTeacherModal" class="modal">
+        <div class="modal-content">
+            <button class="close">&times;</button>
+            <div id="contactTeacherContent">
+                <!-- Contact form will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Meeting Modal -->
+    <div id="requestMeetingModal" class="modal">
+        <div class="modal-content">
+            <button class="close">&times;</button>
+            <div id="requestMeetingContent">
+                <!-- Meeting request form will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

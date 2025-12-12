@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Case Conference System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Case Conference</h1>
+                <p>Teacher Portal</p>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#dashboard" class="active" data-tab="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>Dashboard
+                    </a></li>
+                    <li><a href="#students" data-tab="students">
+                        <i class="fas fa-users"></i>My Students
+                    </a></li>
+                    <li><a href="#forms" data-tab="forms">
+                        <i class="fas fa-clipboard-list"></i>Case Conference Forms
+                    </a></li>
+                    <li><a href="#reports" data-tab="reports">
+                        <i class="fas fa-chart-bar"></i>Reports & Analytics
+                    </a></li>
+                    <li><a href="#schools" data-tab="schools">
+                        <i class="fas fa-school"></i>Schools & Facilities
+                    </a></li>
+                    <li><a href="#profile" data-tab="profile">
+                        <i class="fas fa-user"></i>My Profile
+                    </a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h2 id="pageTitle">Dashboard</h2>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">TJ</div>
+                        <span id="currentUser">Teacher Johnson</span>
+                    </div>
+                    <button id="logoutBtn" class="btn btn-secondary">
+                        <i class="fas fa-sign-out-alt"></i>Logout
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="tab-content active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-number" id="totalStudents">0</span>
+                            <h3>Total Students</h3>
+                            <p>Under your care</p>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="pendingForms">12</span>
+                            <h3>Pending Forms</h3>
+                            <p>Require attention</p>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="completedThisMonth">8</span>
+                            <h3>Completed</h3>
+                            <p>This month</p>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="assignedSchools">2</span>
+                            <h3>Schools</h3>
+                            <p>Assigned to you</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Recent Activity</h3>
+                            <button class="btn btn-primary btn-sm" onclick="system.refreshActivity()">
+                                <i class="fas fa-sync-alt"></i>Refresh
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="activity-list" id="recentActivity">
+                                <div class="activity-item">
+                                    <strong>Case Conference Completed</strong>
+                                    <span>Emma Wilson - Progress Report finalized and distributed</span>
+                                    <small>Today, 10:30 AM</small>
+                                </div>
+                                <div class="activity-item">
+                                    <strong>New Student Added</strong>
+                                    <span>James Miller assigned to your caseload</span>
+                                    <small>Yesterday, 2:15 PM</small>
+                                </div>
+                                <div class="activity-item">
+                                    <strong>IEP Meeting Scheduled</strong>
+                                    <span>Sophia Garcia - IEP review meeting set for next week</span>
+                                    <small>2 days ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Upcoming Case Conferences</h3>
+                            <button class="btn btn-primary btn-sm" onclick="system.scheduleNewConference()">
+                                <i class="fas fa-calendar-plus"></i>Schedule New
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="student-grid" id="upcomingConferences">
+                                <div class="student-card">
+                                    <h4>Emma Wilson</h4>
+                                    <div class="student-info">
+                                        <strong>Date:</strong> November 15, 2024<br>
+                                        <strong>School:</strong> Sunrise Elementary<br>
+                                        <strong>Status:</strong> <span class="status-active">Scheduled</span>
+                                    </div>
+                                    <div class="student-actions">
+                                        <button class="btn btn-primary btn-sm" onclick="system.prepareForms('ST001')">Prepare Forms</button>
+                                        <button class="btn btn-secondary btn-sm" onclick="system.rescheduleConference('ST001')">Reschedule</button>
+                                    </div>
+                                </div>
+                                <div class="student-card">
+                                    <h4>James Miller</h4>
+                                    <div class="student-info">
+                                        <strong>Date:</strong> November 22, 2024<br>
+                                        <strong>School:</strong> Little Explorers<br>
+                                        <strong>Status:</strong> <span class="status-active">Scheduled</span>
+                                    </div>
+                                    <div class="student-actions">
+                                        <button class="btn btn-primary btn-sm" onclick="system.prepareForms('ST002')">Prepare Forms</button>
+                                        <button class="btn btn-secondary btn-sm" onclick="system.rescheduleConference('ST002')">Reschedule</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students Tab -->
+                <div id="students" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Student Management</h3>
+                            <div class="header-actions">
+                                <button id="addStudentBtn" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i>Add New Student
+                                </button>
+                                <button class="btn btn-secondary" onclick="system.exportStudents()">
+                                    <i class="fas fa-download"></i>Export
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="filters">
+                                <input type="text" id="studentSearch" placeholder="Search students..." class="search-input">
+                                <select id="schoolFilter">
+                                    <option value="">All Schools</option>
+                                </select>
+                                <select id="statusFilter">
+                                    <option value="">All Status</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                    <option value="transferred">Transferred</option>
+                                </select>
+                            </div>
+                            <div id="studentList" class="student-grid">
+                                <!-- Students will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Forms Tab -->
+                <div id="forms" class="tab-content">
+                    <div class="tabs-container">
+                        <div class="tabs-header">
+                            <button class="tab-btn active" data-form-tab="progress">Progress Reports</button>
+                            <button class="tab-btn" data-form-tab="assessment">Assessment Forms</button>
+                            <button class="tab-btn" data-form-tab="iep">IEP Forms</button>
+                            <button class="tab-btn" data-form-tab="distribution">Distribution Records</button>
+                        </div>
+                        <div class="tab-content active" id="progressForms">
+                            <h3>Progress Reports</h3>
+                            <p>Manage and complete student progress reports for case conferences.</p>
+                            <div class="student-grid" id="progressReportsList">
+                                <!-- Progress report forms will be listed here -->
+                            </div>
+                        </div>
+                        <div class="tab-content" id="assessmentForms">
+                            <h3>Assessment Forms</h3>
+                            <p>Complete developmental assessments and evaluations.</p>
+                            <div id="assessmentFormsList">
+                                <!-- Assessment forms will be listed here -->
+                            </div>
+                        </div>
+                        <div class="tab-content" id="iepForms">
+                            <h3>IEP Forms</h3>
+                            <p>Individualized Education Program documentation and management.</p>
+                            <div id="iepFormsList">
+                                <!-- IEP forms will be listed here -->
+                            </div>
+                        </div>
+                        <div class="tab-content" id="distributionForms">
+                            <h3>Distribution Records</h3>
+                            <p>Track form distribution to parents and school files.</p>
+                            <div id="distributionFormsList">
+                                <!-- Distribution forms will be listed here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Tab -->
+                <div id="reports" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Reports & Analytics</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <span class="stat-number">95%</span>
+                                    <h3>Form Completion</h3>
+                                    <p>Current rate</p>
+                                </div>
+                                <div class="stat-card">
+                                    <span class="stat-number">12</span>
+                                    <h3>This Month</h3>
+                                    <p>Conferences held</p>
+                                </div>
+                                <div class="stat-card">
+                                    <span class="stat-number">45</span>
+                                    <h3>Total Hours</h3>
+                                    <p>Documentation time saved</p>
+                                </div>
+                            </div>
+                            
+                            <div class="reports-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                                <div class="report-card" style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;">
+                                    <h3>Student Progress Report</h3>
+                                    <p>Generate detailed progress reports for students</p>
+                                    <button class="btn btn-primary" onclick="system.generateProgressReport()">Generate Report</button>
+                                </div>
+                                <div class="report-card" style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;">
+                                    <h3>Case Conference Summary</h3>
+                                    <p>Overview of all case conferences</p>
+                                    <button class="btn btn-primary" onclick="system.viewConferenceSummary()">View Summary</button>
+                                </div>
+                                <div class="report-card" style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;">
+                                    <h3>Attendance Reports</h3>
+                                    <p>Student attendance and participation</p>
+                                    <button class="btn btn-primary" onclick="system.generateAttendanceReport()">Generate Report</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schools Tab -->
+                <div id="schools" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Assigned Schools & Facilities</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="schools-grid" id="assignedSchoolsList">
+                                <!-- Schools will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Tab -->
+                <div id="profile" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>My Profile</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="teacherProfileForm" class="profile-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="teacherName">Full Name:</label>
+                                        <input type="text" id="teacherName" name="name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="teacherEmail">Email:</label>
+                                        <input type="email" id="teacherEmail" name="email" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="teacherPhone">Phone:</label>
+                                        <input type="tel" id="teacherPhone" name="phone">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="teacherId">Teacher ID:</label>
+                                        <input type="text" id="teacherId" name="teacherId" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="assignedSchools">Assigned Schools/Facilities:</label>
+                                    <div id="assignedSchools" class="schools-list">
+                                        <!-- Assigned schools will appear here -->
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                                    <button type="button" class="btn btn-secondary" id="changePasswordBtn">Change Password</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <button class="close">&times;</button>
+            <h3>Add New Student</h3>
+            <form id="addStudentForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="newStudentId">Student ID *</label>
+                        <input type="text" id="newStudentId" name="id" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newStudentName">Full Name *</label>
+                        <input type="text" id="newStudentName" name="name" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="newStudentDob">Date of Birth *</label>
+                        <input type="date" id="newStudentDob" name="dob" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newStudentGender">Gender</label>
+                        <select id="newStudentGender" name="gender">
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="newStudentSchool">Assigned School/Facility *</label>
+                    <select id="newStudentSchool" name="school" required>
+                        <option value="">Select School</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="newStudentDisability">Primary Disability Category</label>
+                    <select id="newStudentDisability" name="disabilityCategory">
+                        <option value="">Select Disability Category</option>
+                        <option value="autism">Autism Spectrum Disorder</option>
+                        <option value="learning">Specific Learning Disability</option>
+                        <option value="speech">Speech/Language Impairment</option>
+                        <option value="intellectual">Intellectual Disability</option>
+                        <option value="emotional">Emotional Disturbance</option>
+                        <option value="developmental">Developmental Delay</option>
+                        <option value="other">Other Health Impairment</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="newStudentIepDate">IEP Date</label>
+                    <input type="date" id="newStudentIepDate" name="iepDate">
+                </div>
+
+                <div class="form-group">
+                    <label for="newStudentNotes">Initial Notes</label>
+                    <textarea id="newStudentNotes" name="notes" rows="3"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Add Student</button>
+                    <button type="button" class="btn btn-secondary" id="cancelAddStudent">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Student Detail Modal -->
+    <div id="studentDetailModal" class="modal">
+        <div class="modal-content large">
+            <button class="close">&times;</button>
+            <div id="studentDetailContent">
+                <!-- Student details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Report Modal -->
+    <div id="progressReportModal" class="modal">
+        <div class="modal-content large">
+            <button class="close">&times;</button>
+            <div id="progressReportContent">
+                <!-- Progress report form will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
