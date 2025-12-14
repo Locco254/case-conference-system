@@ -2,6 +2,7 @@
   "name": "case-conference-backend",
   "version": "1.0.0",
   "description": "Backend API for Case Conference System",
+  "type": "commonjs",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
