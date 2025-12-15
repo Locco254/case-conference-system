@@ -1,156 +1,122 @@
-const express = require('express');
-const cors = require('cors');
-const session = require('express-session');
-const bcrypt = require('bcryptjs');
-const path = require('path');
-require('dotenv').config();
+const express = require("express");
+const cors = require("cors");
+const session = require("express-session");
+const path = require("path");
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
-// =======================
-// Middleware
-// =======================
+/* =======================
+   MIDDLEWARE
+======================= */
+
+app.use(express.json());
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: [
+        "http://localhost:5500",
+        "http://127.0.0.1:5500"
+    ],
     credentials: true
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'case-conference-secret',
+    secret: "case-conference-secret",
     resave: false,
     saveUninitialized: false,
-    cookie: { 
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000
+    cookie: {
+        secure: false, // Render uses HTTPS automatically
+        httpOnly: true
     }
 }));
 
-// =======================
-// PUBLIC ROOT ROUTE (NO AUTH)
-// =======================
+/* =======================
+   HARDCODED USERS (FOR NOW)
+======================= */
+
+const users = [
+    {
+        id: 1,
+        email: "admin@schools.org",
+        password: "admin123",
+        role: "admin"
+    },
+    {
+        id: 2,
+        email: "teacher@test.com",
+        password: "teacher123",
+        role: "teacher"
+    }
+];
+
+/* =======================
+   PUBLIC ROUTE (TEST)
+======================= */
+
 app.get("/", (req, res) => {
-    res.status(200).json({
-        status: "OK",
-        message: "Case Conference Backend is live and running"
-    });
+    res.json({ message: "Backend is running" });
 });
 
-// =======================
-// In-memory database
-// =======================
-let database = {
-    users: [],
-    students: [
-        {
-            id: 'ST001',
-            name: 'Emma Wilson',
-            dob: '2018-03-15',
-            gender: 'female',
-            school: 'S001',
-            disabilityCategory: 'autism',
-            iepDate: '2023-01-15',
-            notes: 'Responds well to visual schedules',
-            status: 'active',
-            assignedTeacher: 'T001',
-            forms: {
-                progress: { status: 'completed', lastUpdated: '2024-01-15' },
-                assessment: { status: 'pending' },
-                iep: { status: 'completed', lastUpdated: '2024-01-10' }
-            },
-            createdAt: new Date().toISOString(),
-            createdBy: 'A001'
-        }
-    ],
-    teachers: [],
-    schools: [],
-    parents: [],
-    systemLogs: [],
-    settings: {
-        systemName: 'Case Conference System'
+/* =======================
+   LOGIN ROUTE
+======================= */
+
+app.post("/api/login", (req, res) => {
+    const { email, password, role } = req.body;
+
+    if (!email || !password || !role) {
+        return res.status(400).json({ error: "Missing fields" });
     }
-};
 
-// =======================
-// Initialize demo users
-// =======================
-(async () => {
-    const hashedPassword = await bcrypt.hash('admin123', 10);
-    database.users.push({
-        id: 'A001',
-        name: 'System Administrator',
-        email: 'admin@schools.org',
-        password: hashedPassword,
-        userType: 'admin',
-        createdAt: new Date().toISOString()
-    });
-})();
-
-// =======================
-// AUTHENTICATION MIDDLEWARE
-// =======================
-function authenticate(req, res, next) {
-    const publicRoutes = ['/', '/api/login', '/api/health'];
-    if (publicRoutes.includes(req.path) || req.session.user) {
-        next();
-    } else {
-        res.status(401).json({ error: 'Unauthorized' });
-    }
-}
-
-app.use(authenticate);
-
-// =======================
-// API ROUTES
-// =======================
-app.get('/api/health', (req, res) => {
-    res.json({
-        status: 'OK',
-        users: database.users.length,
-        students: database.students.length
-    });
-});
-
-app.post('/api/login', async (req, res) => {
-    const { email, password, userType } = req.body;
-
-    let user = database.users.find(
-        u => u.email === email && u.userType === userType
+    const user = users.find(
+        u =>
+            u.email === email &&
+            u.password === password &&
+            u.role === role
     );
 
     if (!user) {
-        const hashed = await bcrypt.hash(password || 'demo123', 10);
-        user = {
-            id: 'U' + Date.now(),
-            name: email.split('@')[0],
-            email,
-            password: hashed,
-            userType
-        };
-        database.users.push(user);
+        return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    const valid = await bcrypt.compare(password, user.password);
-    if (!valid) {
-        return res.status(401).json({ error: 'Invalid credentials' });
+    req.session.user = {
+        id: user.id,
+        email: user.email,
+        role: user.role
+    };
+
+    res.json({
+        message: "Login successful",
+        user: req.session.user
+    });
+});
+
+/* =======================
+   AUTH MIDDLEWARE
+======================= */
+
+function isAuthenticated(req, res, next) {
+    if (!req.session.user) {
+        return res.status(401).json({ error: "Unauthorized" });
     }
+    next();
+}
 
-    req.session.user = user;
-    res.json({ success: true, user });
+/* =======================
+   PROTECTED ROUTE EXAMPLE
+======================= */
+
+app.get("/api/dashboard", isAuthenticated, (req, res) => {
+    res.json({
+        message: "Welcome to dashboard",
+        user: req.session.user
+    });
 });
 
-// =======================
-// ERROR HANDLER
-// =======================
-app.use((err, req, res, next) => {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
-});
+/* =======================
+   START SERVER
+======================= */
 
-// =======================
-// START SERVER
-// =======================
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
